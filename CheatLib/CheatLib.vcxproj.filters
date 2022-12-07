@@ -1,0 +1,338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{edce5a58-f5d6-42e3-914a-bacb32c6d641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fmt">
+      <UniqueIdentifier>{c85ce4e3-a13e-4c33-8e4e-066ebf18dbf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImPlot">
+      <UniqueIdentifier>{4e692376-2e63-48fe-a452-278d49f3331e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImNodes">
+      <UniqueIdentifier>{02be07b9-0dff-4020-b045-47b99d34ac07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stb">
+      <UniqueIdentifier>{bc81248c-7749-4535-9230-7d36f701c704}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{2af9dd6e-c141-4aaa-8cc4-671732722ce6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="magic_enum">
+      <UniqueIdentifier>{4cf8d0a7-2088-4a96-af70-29e4f13e96b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="simpleini">
+      <UniqueIdentifier>{0dd9a089-0dd6-464c-9fe3-4de0fe170249}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inject">
+      <UniqueIdentifier>{166403d9-5d5b-4ce7-93a6-818da6d0a20c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ImGui\Font.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx9.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx10.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx11.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_win32.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_stdlib.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_rectpack.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_textedit.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_truetype.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="控制台.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\format.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\format-inl.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\os.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\ostream.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\printf.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\ranges.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\std.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\xchar.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\args.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\chrono.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\color.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\compile.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\core.h">
+      <Filter>fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="ImPlot\implot_internal.h">
+      <Filter>ImPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="ImPlot\implot.h">
+      <Filter>ImPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="ImNodes\imnodes.h">
+      <Filter>ImNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="ImNodes\imnodes_internal.h">
+      <Filter>ImNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="进程.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="文本.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_image_resize.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_image_write.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_include.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_leakcheck.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_perlin.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_rect_pack.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_sprintf.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_textedit.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_tilemap_editor.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_truetype.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_voxel_render.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_c_lexer.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_connected_components.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_divide.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_ds.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_dxt.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_easy_font.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_herringbone_wang_tile.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_hexwave.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_image.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json_fwd.hpp">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\ordered_map.hpp">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\adl_serializer.hpp">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\byte_container_with_subtype.hpp">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json.hpp">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiD11钩子.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui扩展.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_format.hpp">
+      <Filter>magic_enum</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_fuse.hpp">
+      <Filter>magic_enum</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_switch.hpp">
+      <Filter>magic_enum</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum.hpp">
+      <Filter>magic_enum</Filter>
+    </ClInclude>
+    <ClInclude Include="simpleini\SimpleIni.h">
+      <Filter>simpleini</Filter>
+    </ClInclude>
+    <ClInclude Include="simpleini\ConvertUTF.h">
+      <Filter>simpleini</Filter>
+    </ClInclude>
+    <ClInclude Include="inject\manual-map.h">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="inject\load-library.h">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiD12钩子.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ImGui\Font.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_dx10.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_dx11.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_stdlib.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_tables.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiD11钩子.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="控制台.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="fmt\format.cc">
+      <Filter>fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="fmt\os.cc">
+      <Filter>fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui扩展.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ImPlot\implot_items.cpp">
+      <Filter>ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImPlot\implot.cpp">
+      <Filter>ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImPlot\implot_demo.cpp">
+      <Filter>ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImNodes\imnodes.cpp">
+      <Filter>ImNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="进程.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="文本.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stb\stb_vorbis.c">
+      <Filter>stb</Filter>
+    </ClCompile>
+    <ClCompile Include="simpleini\ConvertUTF.c">
+      <Filter>simpleini</Filter>
+    </ClCompile>
+    <ClCompile Include="inject\manual-map.cpp">
+      <Filter>inject</Filter>
+    </ClCompile>
+    <ClCompile Include="inject\load-library.cpp">
+      <Filter>inject</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiD12钩子.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ImGui\LICENSE.txt">
+      <Filter>ImGui</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

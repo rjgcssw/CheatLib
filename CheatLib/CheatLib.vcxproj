@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{7ce33113-905d-41e3-ac10-d4fa4a1c68e2}</ProjectGuid>
+    <RootNamespace>CheatLib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>CLibrary</TargetName>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Temp\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>CLibrary</TargetName>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Temp\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>CLibrary</TargetName>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Temp\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>CLibrary</TargetName>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Temp\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>预编译.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <EnableModules>true</EnableModules>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)CheatLib\json;$(SolutionDir)CheatLib\stb;$(SolutionDir)CheatLib\ImNodes;$(SolutionDir)CheatLib\;$(SolutionDir)CheatLib\ImPlot;$(SolutionDir)CheatLib\ImGui;$(SolutionDir)CheatLib\detours;$(SolutionDir)CheatLib\magic_enum;$(SolutionDir)CheatLib\simpleini;$(SolutionDir)CheatLib\inject;$(SolutionDir)CheatLib\fmt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>$(SolutionDir)CheatLib\detours\detours-x64.lib;$(SolutionDir)CheatLib\detours\detours-x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>预编译.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <EnableModules>true</EnableModules>
+      <AdditionalIncludeDirectories>$(SolutionDir)CheatLib\json;$(SolutionDir)CheatLib\stb;$(SolutionDir)CheatLib\ImNodes;$(SolutionDir)CheatLib\;$(SolutionDir)CheatLib\ImPlot;$(SolutionDir)CheatLib\ImGui;$(SolutionDir)CheatLib\detours;$(SolutionDir)CheatLib\magic_enum;$(SolutionDir)CheatLib\simpleini;$(SolutionDir)CheatLib\inject;$(SolutionDir)CheatLib\fmt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>$(SolutionDir)CheatLib\detours\detours-x64.lib;$(SolutionDir)CheatLib\detours\detours-x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>预编译.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <EnableModules>true</EnableModules>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)CheatLib\json;$(SolutionDir)CheatLib\stb;$(SolutionDir)CheatLib\ImNodes;$(SolutionDir)CheatLib\;$(SolutionDir)CheatLib\ImPlot;$(SolutionDir)CheatLib\ImGui;$(SolutionDir)CheatLib\detours;$(SolutionDir)CheatLib\magic_enum;$(SolutionDir)CheatLib\simpleini;$(SolutionDir)CheatLib\inject;$(SolutionDir)CheatLib\fmt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>$(SolutionDir)CheatLib\detours\detours-x64.lib;$(SolutionDir)CheatLib\detours\detours-x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>预编译.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <EnableModules>true</EnableModules>
+      <AdditionalIncludeDirectories>$(SolutionDir)CheatLib\json;$(SolutionDir)CheatLib\stb;$(SolutionDir)CheatLib\ImNodes;$(SolutionDir)CheatLib\;$(SolutionDir)CheatLib\ImPlot;$(SolutionDir)CheatLib\ImGui;$(SolutionDir)CheatLib\detours;$(SolutionDir)CheatLib\magic_enum;$(SolutionDir)CheatLib\simpleini;$(SolutionDir)CheatLib\inject;$(SolutionDir)CheatLib\fmt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>$(SolutionDir)CheatLib\detours\detours-x64.lib;$(SolutionDir)CheatLib\detours\detours-x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="fmt\args.h" />
+    <ClInclude Include="fmt\chrono.h" />
+    <ClInclude Include="fmt\color.h" />
+    <ClInclude Include="fmt\compile.h" />
+    <ClInclude Include="fmt\core.h" />
+    <ClInclude Include="fmt\format-inl.h" />
+    <ClInclude Include="fmt\format.h" />
+    <ClInclude Include="fmt\os.h" />
+    <ClInclude Include="fmt\ostream.h" />
+    <ClInclude Include="fmt\printf.h" />
+    <ClInclude Include="fmt\ranges.h" />
+    <ClInclude Include="fmt\std.h" />
+    <ClInclude Include="fmt\xchar.h" />
+    <ClInclude Include="ImGuiD11钩子.hpp" />
+    <ClInclude Include="ImGuiD12钩子.hpp" />
+    <ClInclude Include="ImGui\Font.h" />
+    <ClInclude Include="ImGui\imconfig.h" />
+    <ClInclude Include="ImGui\imgui.h" />
+    <ClInclude Include="ImGui\imgui_impl_dx10.h" />
+    <ClInclude Include="ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="ImGui\imgui_impl_dx9.h" />
+    <ClInclude Include="ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="ImGui\imgui_internal.h" />
+    <ClInclude Include="ImGui\imgui_stdlib.h" />
+    <ClInclude Include="ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ImGui\imstb_textedit.h" />
+    <ClInclude Include="ImGui\imstb_truetype.h" />
+    <ClInclude Include="ImGui扩展.hpp" />
+    <ClInclude Include="ImNodes\imnodes.h" />
+    <ClInclude Include="ImNodes\imnodes_internal.h" />
+    <ClInclude Include="ImPlot\implot.h" />
+    <ClInclude Include="ImPlot\implot_internal.h" />
+    <ClInclude Include="inject\load-library.h" />
+    <ClInclude Include="inject\manual-map.h" />
+    <ClInclude Include="json\adl_serializer.hpp" />
+    <ClInclude Include="json\byte_container_with_subtype.hpp" />
+    <ClInclude Include="json\json.hpp" />
+    <ClInclude Include="json\json_fwd.hpp" />
+    <ClInclude Include="json\ordered_map.hpp" />
+    <ClInclude Include="magic_enum\magic_enum.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_format.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_fuse.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_switch.hpp" />
+    <ClInclude Include="simpleini\ConvertUTF.h" />
+    <ClInclude Include="simpleini\SimpleIni.h" />
+    <ClInclude Include="stb\stb_connected_components.h" />
+    <ClInclude Include="stb\stb_c_lexer.h" />
+    <ClInclude Include="stb\stb_divide.h" />
+    <ClInclude Include="stb\stb_ds.h" />
+    <ClInclude Include="stb\stb_dxt.h" />
+    <ClInclude Include="stb\stb_easy_font.h" />
+    <ClInclude Include="stb\stb_herringbone_wang_tile.h" />
+    <ClInclude Include="stb\stb_hexwave.h" />
+    <ClInclude Include="stb\stb_image.h" />
+    <ClInclude Include="stb\stb_image_resize.h" />
+    <ClInclude Include="stb\stb_image_write.h" />
+    <ClInclude Include="stb\stb_include.h" />
+    <ClInclude Include="stb\stb_leakcheck.h" />
+    <ClInclude Include="stb\stb_perlin.h" />
+    <ClInclude Include="stb\stb_rect_pack.h" />
+    <ClInclude Include="stb\stb_sprintf.h" />
+    <ClInclude Include="stb\stb_textedit.h" />
+    <ClInclude Include="stb\stb_tilemap_editor.h" />
+    <ClInclude Include="stb\stb_truetype.h" />
+    <ClInclude Include="stb\stb_voxel_render.h" />
+    <ClInclude Include="控制台.h" />
+    <ClInclude Include="文本.hpp" />
+    <ClInclude Include="进程.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="fmt\format.cc" />
+    <ClCompile Include="fmt\os.cc" />
+    <ClCompile Include="ImGuiD11钩子.cpp" />
+    <ClCompile Include="ImGuiD12钩子.cpp" />
+    <ClCompile Include="ImGui\Font.cpp" />
+    <ClCompile Include="ImGui\imgui.cpp" />
+    <ClCompile Include="ImGui\imgui_demo.cpp" />
+    <ClCompile Include="ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_dx10.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="ImGui\imgui_stdlib.cpp" />
+    <ClCompile Include="ImGui\imgui_tables.cpp" />
+    <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="ImGui扩展.cpp" />
+    <ClCompile Include="ImNodes\imnodes.cpp" />
+    <ClCompile Include="ImPlot\implot.cpp" />
+    <ClCompile Include="ImPlot\implot_demo.cpp" />
+    <ClCompile Include="ImPlot\implot_items.cpp" />
+    <ClCompile Include="inject\load-library.cpp" />
+    <ClCompile Include="inject\manual-map.cpp" />
+    <ClCompile Include="simpleini\ConvertUTF.c" />
+    <ClCompile Include="stb\stb_vorbis.c" />
+    <ClCompile Include="控制台.cpp" />
+    <ClCompile Include="文本.cpp" />
+    <ClCompile Include="进程.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ImGui\LICENSE.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

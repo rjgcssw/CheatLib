@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+*.vsidx
+*.lock
+.vs/CheatLib/v17/.suo
+*.db
+*.ipch
+*.dat
+*.pdb
+*.log
+*.iobj
+*.recipe
+*.ipdb
+*.tlog
+*.txt
