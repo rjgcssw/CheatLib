@@ -43,3 +43,6 @@
 *.ipdb
 *.tlog
 *.txt
+*.db-shm
+*.opendb
+*.db-wal
