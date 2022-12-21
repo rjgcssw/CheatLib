@@ -747,7 +747,7 @@ FMT_CONSTEXPR const Char* parse_chrono_format(const Char* begin,
       handler.on_duration_unit();
       break;
     case 'z':
-      handler.on_utc_offset();
+      handler.on_utc_offset(numeric_system::standard);
       break;
     case 'Z':
       handler.on_tz_name();
@@ -774,6 +774,9 @@ FMT_CONSTEXPR const Char* parse_chrono_format(const Char* begin,
         break;
       case 'X':
         handler.on_loc_time(numeric_system::alternative);
+        break;
+      case 'z':
+        handler.on_utc_offset(numeric_system::alternative);
         break;
       default:
         FMT_THROW(format_error("invalid format"));
@@ -822,6 +825,9 @@ FMT_CONSTEXPR const Char* parse_chrono_format(const Char* begin,
         break;
       case 'S':
         handler.on_second(numeric_system::alternative);
+        break;
+      case 'z':
+        handler.on_utc_offset(numeric_system::alternative);
         break;
       default:
         FMT_THROW(format_error("invalid format"));
@@ -874,7 +880,7 @@ template <typename Derived> struct null_chrono_spec_handler {
   FMT_CONSTEXPR void on_am_pm() { unsupported(); }
   FMT_CONSTEXPR void on_duration_value() { unsupported(); }
   FMT_CONSTEXPR void on_duration_unit() { unsupported(); }
-  FMT_CONSTEXPR void on_utc_offset() { unsupported(); }
+  FMT_CONSTEXPR void on_utc_offset(numeric_system) { unsupported(); }
   FMT_CONSTEXPR void on_tz_name() { unsupported(); }
 };
 
@@ -915,7 +921,7 @@ struct tm_format_checker : null_chrono_spec_handler<tm_format_checker> {
   FMT_CONSTEXPR void on_24_hour_time() {}
   FMT_CONSTEXPR void on_iso_time() {}
   FMT_CONSTEXPR void on_am_pm() {}
-  FMT_CONSTEXPR void on_utc_offset() {}
+  FMT_CONSTEXPR void on_utc_offset(numeric_system) {}
   FMT_CONSTEXPR void on_tz_name() {}
 };
 
@@ -1047,7 +1053,7 @@ void write_fractional_seconds(OutputIt& out, Duration d, int precision = -1) {
   auto n = static_cast<uint32_or_64_or_128_t<long long>>(subseconds);
   const int num_digits = detail::count_digits(n);
 
-  int leading_zeroes = std::max(0, num_fractional_digits - num_digits);
+  int leading_zeroes = (std::max)(0, num_fractional_digits - num_digits);
   if (precision < 0) {
     FMT_ASSERT(!std::is_floating_point<typename Duration::rep>::value, "");
     if (std::ratio_less<typename subsecond_precision::period,
@@ -1058,10 +1064,10 @@ void write_fractional_seconds(OutputIt& out, Duration d, int precision = -1) {
     }
   } else {
     *out++ = '.';
-    leading_zeroes = std::min(leading_zeroes, precision);
+    leading_zeroes = (std::min)(leading_zeroes, precision);
     out = std::fill_n(out, leading_zeroes, '0');
     int remaining = precision - leading_zeroes;
-    if (remaining < num_digits) {
+    if (remaining != 0 && remaining < num_digits) {
       n /= to_unsigned(detail::pow10(to_unsigned(num_digits - remaining)));
       out = format_decimal<Char>(out, n, remaining).end;
       return;
@@ -1218,7 +1224,7 @@ class tm_writer {
     }
   }
 
-  void write_utc_offset(long offset) {
+  void write_utc_offset(long offset, numeric_system ns) {
     if (offset < 0) {
       *out_++ = '-';
       offset = -offset;
@@ -1227,14 +1233,15 @@ class tm_writer {
     }
     offset /= 60;
     write2(static_cast<int>(offset / 60));
+    if (ns != numeric_system::standard) *out_++ = ':';
     write2(static_cast<int>(offset % 60));
   }
   template <typename T, FMT_ENABLE_IF(has_member_data_tm_gmtoff<T>::value)>
-  void format_utc_offset_impl(const T& tm) {
-    write_utc_offset(tm.tm_gmtoff);
+  void format_utc_offset_impl(const T& tm, numeric_system ns) {
+    write_utc_offset(tm.tm_gmtoff, ns);
   }
   template <typename T, FMT_ENABLE_IF(!has_member_data_tm_gmtoff<T>::value)>
-  void format_utc_offset_impl(const T& tm) {
+  void format_utc_offset_impl(const T& tm, numeric_system ns) {
 #if defined(_WIN32) && defined(_UCRT)
 #  if FMT_USE_TZSET
     tzset_once();
@@ -1246,10 +1253,17 @@ class tm_writer {
       _get_dstbias(&dstbias);
       offset += dstbias;
     }
-    write_utc_offset(-offset);
+    write_utc_offset(-offset, ns);
 #else
-    ignore_unused(tm);
-    format_localized('z');
+    if (ns == numeric_system::standard) return format_localized('z');
+
+    // Extract timezone offset from timezone conversion functions.
+    std::tm gtm = tm;
+    std::time_t gt = std::mktime(&gtm);
+    std::tm ltm = gmtime(gt);
+    std::time_t lt = std::mktime(&ltm);
+    long offset = gt - lt;
+    write_utc_offset(offset, ns);
 #endif
   }
 
@@ -1375,7 +1389,7 @@ class tm_writer {
     out_ = copy_str<Char>(std::begin(buf) + offset, std::end(buf), out_);
   }
 
-  void on_utc_offset() { format_utc_offset_impl(tm_); }
+  void on_utc_offset(numeric_system ns) { format_utc_offset_impl(tm_, ns); }
   void on_tz_name() { format_tz_name_impl(tm_); }
 
   void on_year(numeric_system ns) {
@@ -1807,7 +1821,7 @@ struct chrono_formatter {
   void on_loc_time(numeric_system) {}
   void on_us_date() {}
   void on_iso_date() {}
-  void on_utc_offset() {}
+  void on_utc_offset(numeric_system) {}
   void on_tz_name() {}
   void on_year(numeric_system) {}
   void on_short_year(numeric_system) {}

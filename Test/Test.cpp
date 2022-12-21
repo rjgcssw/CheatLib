@@ -1,12 +1,10 @@
-﻿#include <控制台.h>
-#include <进程.hpp>
-#include <stdio.h>
+﻿#include <Console.hpp>
+#include <Process.hpp>
 int main()
 {
-	进程::取模块路径((HMODULE)(-1));
-	输出信息("Hello Word\n");
-	输出警告("Hello Word\n");
-	输出调试("Hello Word\n");
-	输出错误("Hello Word\n");
+	LOGINFO("Hello Word\n");
+	LOGWARNING("Hello Word\n");
+	LOGDEBUG("Hello Word\n");
+	LOGERROR("Hello Word\n");
 	system("pause");
 }

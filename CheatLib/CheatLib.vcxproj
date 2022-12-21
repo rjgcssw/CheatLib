@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -241,8 +241,7 @@
     <ClInclude Include="fmt\ranges.h" />
     <ClInclude Include="fmt\std.h" />
     <ClInclude Include="fmt\xchar.h" />
-    <ClInclude Include="ImGuiD11钩子.hpp" />
-    <ClInclude Include="ImGuiD12钩子.hpp" />
+    <ClInclude Include="ImGuiDx11Hook.hpp" />
     <ClInclude Include="ImGui\Font.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -255,18 +254,15 @@
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
-    <ClInclude Include="ImGui扩展.hpp" />
+    <ClInclude Include="ImGuiEX.hpp" />
     <ClInclude Include="ImNodes\imnodes.h" />
     <ClInclude Include="ImNodes\imnodes_internal.h" />
     <ClInclude Include="ImPlot\implot.h" />
     <ClInclude Include="ImPlot\implot_internal.h" />
     <ClInclude Include="inject\load-library.h" />
     <ClInclude Include="inject\manual-map.h" />
-    <ClInclude Include="json\adl_serializer.hpp" />
-    <ClInclude Include="json\byte_container_with_subtype.hpp" />
     <ClInclude Include="json\json.hpp" />
     <ClInclude Include="json\json_fwd.hpp" />
-    <ClInclude Include="json\ordered_map.hpp" />
     <ClInclude Include="magic_enum\magic_enum.hpp" />
     <ClInclude Include="magic_enum\magic_enum_format.hpp" />
     <ClInclude Include="magic_enum\magic_enum_fuse.hpp" />
@@ -293,15 +289,14 @@
     <ClInclude Include="stb\stb_tilemap_editor.h" />
     <ClInclude Include="stb\stb_truetype.h" />
     <ClInclude Include="stb\stb_voxel_render.h" />
-    <ClInclude Include="控制台.h" />
-    <ClInclude Include="文本.hpp" />
-    <ClInclude Include="进程.hpp" />
+    <ClInclude Include="Console.hpp" />
+    <ClInclude Include="Text.hpp" />
+    <ClInclude Include="Process.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fmt\format.cc" />
     <ClCompile Include="fmt\os.cc" />
-    <ClCompile Include="ImGuiD11钩子.cpp" />
-    <ClCompile Include="ImGuiD12钩子.cpp" />
+    <ClCompile Include="ImGuiDx11Hook.cpp" />
     <ClCompile Include="ImGui\Font.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
@@ -313,7 +308,7 @@
     <ClCompile Include="ImGui\imgui_stdlib.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="ImGui扩展.cpp" />
+    <ClCompile Include="ImGuiEX.cpp" />
     <ClCompile Include="ImNodes\imnodes.cpp" />
     <ClCompile Include="ImPlot\implot.cpp" />
     <ClCompile Include="ImPlot\implot_demo.cpp" />
@@ -322,9 +317,9 @@
     <ClCompile Include="inject\manual-map.cpp" />
     <ClCompile Include="simpleini\ConvertUTF.c" />
     <ClCompile Include="stb\stb_vorbis.c" />
-    <ClCompile Include="控制台.cpp" />
-    <ClCompile Include="文本.cpp" />
-    <ClCompile Include="进程.cpp" />
+    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Process.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ImGui\LICENSE.txt" />

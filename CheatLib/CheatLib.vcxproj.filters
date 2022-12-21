@@ -78,9 +78,6 @@
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="控制台.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="fmt\format.h">
       <Filter>fmt</Filter>
     </ClInclude>
@@ -131,12 +128,6 @@
     </ClInclude>
     <ClInclude Include="ImNodes\imnodes_internal.h">
       <Filter>ImNodes</Filter>
-    </ClInclude>
-    <ClInclude Include="进程.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="文本.hpp">
-      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="stb\stb_image_resize.h">
       <Filter>stb</Filter>
@@ -201,23 +192,8 @@
     <ClInclude Include="json\json_fwd.hpp">
       <Filter>json</Filter>
     </ClInclude>
-    <ClInclude Include="json\ordered_map.hpp">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\adl_serializer.hpp">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\byte_container_with_subtype.hpp">
-      <Filter>json</Filter>
-    </ClInclude>
     <ClInclude Include="json\json.hpp">
       <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiD11钩子.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui扩展.hpp">
-      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="magic_enum\magic_enum_format.hpp">
       <Filter>magic_enum</Filter>
@@ -243,7 +219,19 @@
     <ClInclude Include="inject\load-library.h">
       <Filter>inject</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiD12钩子.hpp">
+    <ClInclude Include="ImGuiDx11Hook.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiEX.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Process.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -281,20 +269,11 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiD11钩子.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="控制台.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="fmt\format.cc">
       <Filter>fmt</Filter>
     </ClCompile>
     <ClCompile Include="fmt\os.cc">
       <Filter>fmt</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui扩展.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ImPlot\implot_items.cpp">
       <Filter>ImPlot</Filter>
@@ -308,12 +287,6 @@
     <ClCompile Include="ImNodes\imnodes.cpp">
       <Filter>ImNodes</Filter>
     </ClCompile>
-    <ClCompile Include="进程.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="文本.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stb\stb_vorbis.c">
       <Filter>stb</Filter>
     </ClCompile>
@@ -326,7 +299,19 @@
     <ClCompile Include="inject\load-library.cpp">
       <Filter>inject</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiD12钩子.cpp">
+    <ClCompile Include="ImGuiDx11Hook.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiEX.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Process.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
