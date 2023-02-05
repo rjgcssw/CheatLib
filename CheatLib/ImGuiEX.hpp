@@ -7,7 +7,16 @@
 #include <implot_internal.h>
 #include <imnodes.h>
 #include <imnodes_internal.h>
-
+#include <d3d11.h>
+#include <dxgi.h>
+#include <d3dcompiler.h>
+#pragma comment (lib, "winmm.lib")
+#pragma comment (lib, "User32.lib")
+#pragma comment (lib, "Gdi32.lib")
+#pragma comment (lib, "shlwapi.lib")
+#pragma comment (lib, "D3dcompiler.lib")
+#pragma comment (lib, "d3d11.lib")
+#pragma comment (lib, "dxgi.lib")
 #define PI 3.14159265358979323846f
 namespace ImGui {
 	struct GroupPanelHeaderBounds
@@ -24,6 +33,7 @@ namespace ImGui {
 		Bottom = 8,
 		All = Left | Right | Top | Bottom
 	};
+	bool DX11LoadTextureFromFile(ID3D11Device* D3D11Device, const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
 	void DrawOffscreenArrows(float x, float y, float z, const ImColor& color, float OutlineThickness, float TracerSize, float ArrowRadius);
 	ImU32 GetTeamColor(unsigned long Team, unsigned long A);
 	void DefaultTheme();

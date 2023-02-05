@@ -4,8 +4,8 @@
 	--------------------------------------------------------
 */
 #include <ImGuiDx11Hook.hpp>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include <iostream>
+#include <fmt/format.h>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 namespace DX11Hook {
 	ID3D11Device* D3D11Device = nullptr;
@@ -23,6 +23,7 @@ namespace DX11Hook {
 		IDXGISwapChain* SwapChain;
 	}Info;
 	static WNDPROC OriginalWndProcHandler;
+	static BOOL g_bInitialised = false;
 	static LRESULT CALLBACK hWndProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -65,7 +66,6 @@ namespace DX11Hook {
 	}
 	static HRESULT __stdcall Present_Hook(IDXGISwapChain* pChain, const UINT SyncInterval, const UINT Flags)
 	{
-		static BOOL g_bInitialised = false;
 		if (!g_bInitialised)
 		{
 			auto result = (HRESULT)pChain->GetDevice(__uuidof(D3D11Device), reinterpret_cast<void**>(&D3D11Device));
@@ -90,13 +90,16 @@ namespace DX11Hook {
 				}
 				if (Info.ImGuiInIFile == "")
 				{
-					io.IniFilename = std::string(Process::GetModuleFile(Info.Module) + "\\imgui.ini").c_str();
+					static const std::string imguiPath = std::string(Process::GetModuleFile(Info.Module) + "\\imgui.ini");
+					io.IniFilename = imguiPath.c_str();
 				}
 				else
 				{
-					io.IniFilename = Info.ImGuiInIFile.c_str();
+					static const std::string imguiPath = Info.ImGuiInIFile;
+					io.IniFilename = imguiPath.c_str();
 				}
-				ImGui::DefaultTheme();
+				io.SetPlatformImeDataFn = nullptr; // F**king bug take 4 hours of my life
+				ImGui::StyleColorsDark();
 				//Set OriginalWndProcHandler to the Address of the Original WndProc function
 				OriginalWndProcHandler = reinterpret_cast<WNDPROC>(SetWindowLongPtr(sd.OutputWindow, GWLP_WNDPROC,
 					reinterpret_cast<LONG_PTR>(hWndProc)));
@@ -179,52 +182,7 @@ namespace DX11Hook {
 
 		return swapChainPresent;
 	}
-	bool DX11LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
-	{
-		// Load from disk into a raw RGBA buffer
-		int image_width = 0;
-		int image_height = 0;
-		unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
-		if (image_data == NULL)
-			return false;
-
-		// Create texture
-		D3D11_TEXTURE2D_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
-		desc.Width = image_width;
-		desc.Height = image_height;
-		desc.MipLevels = 1;
-		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.SampleDesc.Count = 1;
-		desc.Usage = D3D11_USAGE_DEFAULT;
-		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		desc.CPUAccessFlags = 0;
-
-		ID3D11Texture2D* pTexture = NULL;
-		D3D11_SUBRESOURCE_DATA subResource;
-		subResource.pSysMem = image_data;
-		subResource.SysMemPitch = desc.Width * 4;
-		subResource.SysMemSlicePitch = 0;
-		D3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
-
-		// Create texture view
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		ZeroMemory(&srvDesc, sizeof(srvDesc));
-		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = desc.MipLevels;
-		srvDesc.Texture2D.MostDetailedMip = 0;
-		D3D11Device->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
-		pTexture->Release();
-
-		*out_width = image_width;
-		*out_height = image_height;
-		stbi_image_free(image_data);
-
-		return true;
-	}
-	bool installDX11Hook(void(*Drawing)(), HMODULE Module, std::string ImGuiInIFile, float FontSize, unsigned char* Font, ID3D11Device* DX11D3D11Device, ID3D11DeviceContext* DX11D3D11DeviceContext, ID3D11RenderTargetView* DX11D3D11RenderTargetView, IDXGISwapChain* DX11SwapChain) {
+	bool installDX11Hook(void(*Drawing)(), HMODULE Module, std::string ImGuiInIFile, float FontSize, unsigned char* Font, ID3D11Device** DX11D3D11Device, ID3D11DeviceContext** DX11D3D11DeviceContext, ID3D11RenderTargetView** DX11D3D11RenderTargetView, IDXGISwapChain** DX11SwapChain) {
 		Info.Font = Font;Info.FontSize = FontSize;Info.Drawing = Drawing;Info.Module = Module;Info.ImGuiInIFile = ImGuiInIFile;
 		fnIDXGISwapChainPresent = findDirect11Present();
 		if (fnIDXGISwapChainPresent == nullptr)
@@ -235,12 +193,32 @@ namespace DX11Hook {
 		DetourUpdateThread(GetCurrentThread());
 		DetourAttach(&(PVOID&)fnIDXGISwapChainPresent, Present_Hook);
 		DetourTransactionCommit();
-		try {
-			while (!Info.CanReturn) { DX11D3D11Device = D3D11Device; DX11D3D11DeviceContext = D3D11DeviceContext; DX11D3D11RenderTargetView = D3D11RenderTargetView; DX11SwapChain = Info.SwapChain; }
+		while (!g_bInitialised)
+		{ 
+			Sleep(1);
 		}
-		catch (...) {
-			LOGDEBUG("ø’÷∏’Î≤∂ªÒ");
+		try
+		{
+			*DX11D3D11Device = D3D11Device;
+			*DX11D3D11DeviceContext = D3D11DeviceContext;
+			*DX11D3D11RenderTargetView = D3D11RenderTargetView;
+			*DX11SwapChain = Info.SwapChain;
 		}
+		catch (...)
+		{
+			LOGERROR("Point Address is NULL\n");
+		}
+		LOGDEBUG(fmt::format("D3D11Device:{}\n", (INT64)D3D11Device));
+		LOGDEBUG(fmt::format("D3D11DeviceContext:{}\n", (INT64)D3D11DeviceContext));
+		LOGDEBUG(fmt::format("D3D11RenderTargetView:{}\n", (INT64)D3D11RenderTargetView));
+		LOGDEBUG(fmt::format("SwapChain:{}\n", (INT64)Info.SwapChain));
+		return true;
+	}
+	bool uninstallDX11Hook() {
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)fnIDXGISwapChainPresent, Present_Hook);
+		DetourTransactionCommit();
 		return true;
 	}
 }

@@ -1,10 +1,10 @@
 #pragma once
 #include <Windows.h>
 #include <string>
-#define LOGDEBUG(text,...) Console::OutConsole(Console::debug,text,__FILE__,__LINE__)
-#define LOGINFO(text,...) Console::OutConsole(Console::info,text,__FILE__,__LINE__)
-#define LOGWARNING(text,...) Console::OutConsole(Console::warning,text,__FILE__,__LINE__)
-#define LOGERROR(text,...) Console::OutConsole(Console::error,text,__FILE__,__LINE__)
+#define LOGDEBUG(text) Console::OutConsole(Console::debug,text,__FILE__,__LINE__)
+#define LOGINFO(text) Console::OutConsole(Console::info,text,__FILE__,__LINE__)
+#define LOGWARNING(text) Console::OutConsole(Console::warning,text,__FILE__,__LINE__)
+#define LOGERROR(text) Console::OutConsole(Console::error,text,__FILE__,__LINE__)
 namespace Console {
 	enum OutType : short int {
 		info,

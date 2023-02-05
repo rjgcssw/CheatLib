@@ -39,6 +39,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
+    <SpectreMitigation>false</SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -120,7 +121,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -134,18 +135,21 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
-      <ControlFlowGuard>false</ControlFlowGuard>
-      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <CreateHotpatchableImage>false</CreateHotpatchableImage>
       <EnableModules>true</EnableModules>
       <AdditionalIncludeDirectories>$(SolutionDir)CheatLib\json;$(SolutionDir)CheatLib\stb;$(SolutionDir)CheatLib\ImNodes;$(SolutionDir)CheatLib\;$(SolutionDir)CheatLib\ImPlot;$(SolutionDir)CheatLib\ImGui;$(SolutionDir)CheatLib\detours;$(SolutionDir)CheatLib\magic_enum;$(SolutionDir)CheatLib\simpleini;$(SolutionDir)CheatLib\inject;$(SolutionDir)CheatLib\fmt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <GuardEHContMetadata>false</GuardEHContMetadata>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -228,6 +232,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="detours\detours.h" />
+    <ClInclude Include="detours\detver.h" />
     <ClInclude Include="fmt\args.h" />
     <ClInclude Include="fmt\chrono.h" />
     <ClInclude Include="fmt\color.h" />
@@ -241,11 +247,12 @@
     <ClInclude Include="fmt\ranges.h" />
     <ClInclude Include="fmt\std.h" />
     <ClInclude Include="fmt\xchar.h" />
+    <ClInclude Include="HookManager.h" />
+    <ClInclude Include="ImGuiDx11Draw.hpp" />
     <ClInclude Include="ImGuiDx11Hook.hpp" />
     <ClInclude Include="ImGui\Font.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
-    <ClInclude Include="ImGui\imgui_impl_dx10.h" />
     <ClInclude Include="ImGui\imgui_impl_dx11.h" />
     <ClInclude Include="ImGui\imgui_impl_dx9.h" />
     <ClInclude Include="ImGui\imgui_impl_win32.h" />
@@ -267,6 +274,7 @@
     <ClInclude Include="magic_enum\magic_enum_format.hpp" />
     <ClInclude Include="magic_enum\magic_enum_fuse.hpp" />
     <ClInclude Include="magic_enum\magic_enum_switch.hpp" />
+    <ClInclude Include="Memory.hpp" />
     <ClInclude Include="simpleini\ConvertUTF.h" />
     <ClInclude Include="simpleini\SimpleIni.h" />
     <ClInclude Include="stb\stb_connected_components.h" />
@@ -292,16 +300,17 @@
     <ClInclude Include="Console.hpp" />
     <ClInclude Include="Text.hpp" />
     <ClInclude Include="Process.hpp" />
+    <ClInclude Include="VEHHook.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fmt\format.cc" />
     <ClCompile Include="fmt\os.cc" />
+    <ClCompile Include="ImGuiDx11Draw.cpp" />
     <ClCompile Include="ImGuiDx11Hook.cpp" />
     <ClCompile Include="ImGui\Font.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
-    <ClCompile Include="ImGui\imgui_impl_dx10.cpp" />
     <ClCompile Include="ImGui\imgui_impl_dx11.cpp" />
     <ClCompile Include="ImGui\imgui_impl_dx9.cpp" />
     <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
@@ -315,11 +324,13 @@
     <ClCompile Include="ImPlot\implot_items.cpp" />
     <ClCompile Include="inject\load-library.cpp" />
     <ClCompile Include="inject\manual-map.cpp" />
+    <ClCompile Include="Memory.cpp" />
     <ClCompile Include="simpleini\ConvertUTF.c" />
     <ClCompile Include="stb\stb_vorbis.c" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Process.cpp" />
+    <ClCompile Include="VEHHook.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ImGui\LICENSE.txt" />

@@ -1,4 +1,4 @@
-// dear imgui, v1.89.2 WIP
+// dear imgui, v1.89.3 WIP
 // (demo code)
 
 // Help:
@@ -610,19 +610,40 @@ static void ShowDemoWindowWidgets()
         ImGui::SameLine();
         ImGui::Text("%d", counter);
 
-        ImGui::Separator();
-        ImGui::LabelText("label", "Value");
-
         {
-            // Using the _simplified_ one-liner Combo() api here
-            // See "Combo" section for examples of how to use the more flexible BeginCombo()/EndCombo() api.
-            IMGUI_DEMO_MARKER("Widgets/Basic/Combo");
-            const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
-            static int item_current = 0;
-            ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
-            ImGui::SameLine(); HelpMarker(
-                "Using the simplified one-liner Combo API here.\nRefer to the \"Combo\" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.");
+            // Tooltips
+            IMGUI_DEMO_MARKER("Widgets/Basic/Tooltips");
+            //ImGui::AlignTextToFramePadding();
+            ImGui::Text("Tooltips:");
+
+            ImGui::SameLine();
+            ImGui::SmallButton("Button");
+            if (ImGui::IsItemHovered())
+                ImGui::SetTooltip("I am a tooltip");
+
+            ImGui::SameLine();
+            ImGui::SmallButton("Fancy");
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::Text("I am a fancy tooltip");
+                static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
+                ImGui::PlotLines("Curve", arr, IM_ARRAYSIZE(arr));
+                ImGui::Text("Sin(time) = %f", sinf((float)ImGui::GetTime()));
+                ImGui::EndTooltip();
+            }
+
+            ImGui::SameLine();
+            ImGui::SmallButton("Delayed");
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) // With a delay
+                ImGui::SetTooltip("I am a tooltip with a delay.");
+
+            ImGui::SameLine();
+            HelpMarker(
+                "Tooltip are created by using the IsItemHovered() function over any kind of item.");
         }
+
+        ImGui::LabelText("label", "Value");
 
         {
             // To wire InputText() with std::string or any other custom string type,
@@ -723,6 +744,17 @@ static void ShowDemoWindowWidgets()
         }
 
         {
+            // Using the _simplified_ one-liner Combo() api here
+            // See "Combo" section for examples of how to use the more flexible BeginCombo()/EndCombo() api.
+            IMGUI_DEMO_MARKER("Widgets/Basic/Combo");
+            const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
+            static int item_current = 0;
+            ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+            ImGui::SameLine(); HelpMarker(
+                "Using the simplified one-liner Combo API here.\nRefer to the \"Combo\" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.");
+        }
+
+        {
             // Using the _simplified_ one-liner ListBox() api here
             // See "List boxes" section for examples of how to use the more flexible BeginListBox()/EndListBox() api.
             IMGUI_DEMO_MARKER("Widgets/Basic/ListBox");
@@ -731,40 +763,6 @@ static void ShowDemoWindowWidgets()
             ImGui::ListBox("listbox", &item_current, items, IM_ARRAYSIZE(items), 4);
             ImGui::SameLine(); HelpMarker(
                 "Using the simplified one-liner ListBox API here.\nRefer to the \"List boxes\" section below for an explanation of how to use the more flexible and general BeginListBox/EndListBox API.");
-        }
-
-        {
-            // Tooltips
-            IMGUI_DEMO_MARKER("Widgets/Basic/Tooltips");
-            ImGui::AlignTextToFramePadding();
-            ImGui::Text("Tooltips:");
-
-            ImGui::SameLine();
-            ImGui::Button("Button");
-            if (ImGui::IsItemHovered())
-                ImGui::SetTooltip("I am a tooltip");
-
-            ImGui::SameLine();
-            ImGui::Button("Fancy");
-            if (ImGui::IsItemHovered())
-            {
-                ImGui::BeginTooltip();
-                ImGui::Text("I am a fancy tooltip");
-                static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-                ImGui::PlotLines("Curve", arr, IM_ARRAYSIZE(arr));
-                ImGui::Text("Sin(time) = %f", sinf((float)ImGui::GetTime()));
-                ImGui::EndTooltip();
-            }
-
-            ImGui::SameLine();
-            ImGui::Button("Delayed");
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) // Delay best used on items that highlight on hover, so this not a great example!
-                ImGui::SetTooltip("I am a tooltip with a delay.");
-
-            ImGui::SameLine();
-            HelpMarker(
-                "Tooltip are created by using the IsItemHovered() function over any kind of item.");
-
         }
 
         ImGui::TreePop();
@@ -3438,11 +3436,14 @@ static void ShowDemoWindowPopups()
         // and BeginPopupContextItem() will use the last item ID as the popup ID.
         {
             const char* names[5] = { "Label1", "Label2", "Label3", "Label4", "Label5" };
+            static int selected = -1;
             for (int n = 0; n < 5; n++)
             {
-                ImGui::Selectable(names[n]);
+                if (ImGui::Selectable(names[n], selected == n))
+                    selected = n;
                 if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
                 {
+                    selected = n;
                     ImGui::Text("This a popup for \"%s\"!", names[n]);
                     if (ImGui::Button("Close"))
                         ImGui::CloseCurrentPopup();
@@ -5772,76 +5773,6 @@ static void ShowDemoWindowInputs()
             ImGui::TreePop();
         }
 
-        // Demonstrate using Shortcut() and Routing Policies.
-        // The general flow is:
-        // - Code interested in a chord (e.g. "Ctrl+A") declares their intent.
-        // - Multiple locations may be interested in same chord! Routing helps find a winner.
-        // - Every frame, we resolve all claims and assign one owner if the modifiers are matching.
-        // - The lower-level function is 'bool SetShortcutRouting()', returns true when caller got the route.
-        // - Most of the times, SetShortcutRouting() is not called directly. User mostly calls Shortcut() with routing flags.
-        // - If you call Shortcut() WITHOUT any routing option, it uses ImGuiInputFlags_RouteFocused.
-        // TL;DR: Most uses will simply be:
-        // - Shortcut(ImGuiMod_Ctrl | ImGuiKey_A); // Use ImGuiInputFlags_RouteFocused policy.
-        if (ImGui::TreeNode("Shortcut Routing"))
-        {
-            const float line_height = ImGui::GetTextLineHeightWithSpacing();
-            const ImGuiKeyChord key_chord = ImGuiMod_Ctrl | ImGuiKey_A;
-            static ImGuiInputFlags repeat_flags = ImGuiInputFlags_Repeat;
-            static ImGuiInputFlags routing_flags = ImGuiInputFlags_RouteFocused;
-            ImGui::CheckboxFlags("ImGuiInputFlags_Repeat", &repeat_flags, ImGuiInputFlags_Repeat);
-            ImGui::RadioButton("ImGuiInputFlags_RouteFocused (default)", &routing_flags, ImGuiInputFlags_RouteFocused);
-            ImGui::RadioButton("ImGuiInputFlags_RouteAlways", &routing_flags, ImGuiInputFlags_RouteAlways);
-            ImGui::RadioButton("ImGuiInputFlags_RouteGlobal", &routing_flags, ImGuiInputFlags_RouteGlobal);
-            ImGui::RadioButton("ImGuiInputFlags_RouteGlobalHigh", &routing_flags, ImGuiInputFlags_RouteGlobalHigh);
-            ImGui::RadioButton("ImGuiInputFlags_RouteGlobalLow", &routing_flags, ImGuiInputFlags_RouteGlobalLow);
-            const ImGuiInputFlags flags = repeat_flags | routing_flags; // Merged flags
-
-            ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, 0, flags) ? "PRESSED" : "...");
-
-            ImGui::BeginChild("WindowA", ImVec2(-FLT_MIN, line_height * 18), true);
-            ImGui::Text("Press CTRL+A and see who receives it!");
-            ImGui::Separator();
-
-            // 1: Window polling for CTRL+A
-            ImGui::Text("(in WindowA)");
-            ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, 0, flags) ? "PRESSED" : "...");
-
-            // 2: InputText also polling for CTRL+A: it always uses _RouteFocused internally (gets priority when active)
-            char str[16] = "Press CTRL+A";
-            ImGui::Spacing();
-            ImGui::InputText("InputTextB", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly);
-            ImGuiID item_id = ImGui::GetItemID();
-            ImGui::SameLine(); HelpMarker("Internal widgets always use _RouteFocused");
-            ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, item_id, flags) ? "PRESSED" : "...");
-
-            // 3: Dummy child is not claiming the route: focusing them shouldn't steal route away from WindowA
-            ImGui::BeginChild("ChildD", ImVec2(-FLT_MIN, line_height * 4), true);
-            ImGui::Text("(in ChildD: not using same Shortcut)");
-            ImGui::Text("IsWindowFocused: %d", ImGui::IsWindowFocused());
-            ImGui::EndChild();
-
-            // 4: Child window polling for CTRL+A. It is deeper than WindowA and gets priority when focused.
-            ImGui::BeginChild("ChildE", ImVec2(-FLT_MIN, line_height * 4), true);
-            ImGui::Text("(in ChildE: using same Shortcut)");
-            ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, 0, flags) ? "PRESSED" : "...");
-            ImGui::EndChild();
-
-            // 5: In a popup
-            if (ImGui::Button("Open Popup"))
-                ImGui::OpenPopup("PopupF");
-            if (ImGui::BeginPopup("PopupF"))
-            {
-                ImGui::Text("(in PopupF)");
-                ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, 0, flags) ? "PRESSED" : "...");
-                ImGui::InputText("InputTextG", str, IM_ARRAYSIZE(str), ImGuiInputTextFlags_ReadOnly);
-                ImGui::Text("IsWindowFocused: %d, Shortcut: %s", ImGui::IsWindowFocused(), ImGui::Shortcut(key_chord, ImGui::GetItemID(), flags) ? "PRESSED" : "...");
-                ImGui::EndPopup();
-            }
-            ImGui::EndChild();
-
-            ImGui::TreePop();
-        }
-
         // Display mouse cursors
         IMGUI_DEMO_MARKER("Inputs & Focus/Mouse Cursors");
         if (ImGui::TreeNode("Mouse Cursors"))
@@ -6232,7 +6163,6 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             ImGui::SliderFloat("PopupRounding", &style.PopupRounding, 0.0f, 12.0f, "%.0f");
             ImGui::SliderFloat("ScrollbarRounding", &style.ScrollbarRounding, 0.0f, 12.0f, "%.0f");
             ImGui::SliderFloat("GrabRounding", &style.GrabRounding, 0.0f, 12.0f, "%.0f");
-            ImGui::SliderFloat("LogSliderDeadzone", &style.LogSliderDeadzone, 0.0f, 12.0f, "%.0f");
             ImGui::SliderFloat("TabRounding", &style.TabRounding, 0.0f, 12.0f, "%.0f");
             ImGui::Text("Alignment");
             ImGui::SliderFloat2("WindowTitleAlign", (float*)&style.WindowTitleAlign, 0.0f, 1.0f, "%.2f");
@@ -6247,6 +6177,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             ImGui::Text("Safe Area Padding");
             ImGui::SameLine(); HelpMarker("Adjust if you cannot see the edges of your screen (e.g. on a TV where scaling has not been configured).");
             ImGui::SliderFloat2("DisplaySafeAreaPadding", (float*)&style.DisplaySafeAreaPadding, 0.0f, 30.0f, "%.0f");
+            ImGui::SliderFloat("LogSliderDeadzone", &style.LogSliderDeadzone, 0.0f, 12.0f, "%.0f");
             ImGui::EndTabItem();
         }
 
@@ -7105,9 +7036,6 @@ static void ShowExampleAppLayout(bool* p_open)
             ImGui::EndMenuBar();
         }
 
-        if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_W))
-            *p_open = false;
-
         // Left
         static int selected = 0;
         {
@@ -7815,14 +7743,11 @@ struct MyDocument
         ImGui::PushStyleColor(ImGuiCol_Text, doc->Color);
         ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
         ImGui::PopStyleColor();
-        if (ImGui::Button("Modify (Ctrl+M)") || ImGui::Shortcut(ImGuiMod_Shortcut | ImGuiKey_M))
+        if (ImGui::Button("Modify", ImVec2(100, 0)))
             doc->Dirty = true;
         ImGui::SameLine();
-        if (ImGui::Button("Save (Ctrl+S)") || ImGui::Shortcut(ImGuiMod_Shortcut | ImGuiKey_S))
+        if (ImGui::Button("Save", ImVec2(100, 0)))
             doc->DoSave();
-        ImGui::SameLine();
-        if (ImGui::Button("Close (Ctrl+W)") || ImGui::Shortcut(ImGuiMod_Shortcut | ImGuiKey_W))
-            doc->DoQueueClose();
         ImGui::ColorEdit3("color", &doc->Color.x);  // Useful to test drag and drop and hold-dragged-to-open-tab behavior.
         ImGui::PopID();
     }
@@ -7835,9 +7760,9 @@ struct MyDocument
 
         char buf[256];
         sprintf(buf, "Save %s", doc->Name);
-        if (ImGui::MenuItem(buf, "Ctrl+S", false, doc->Open))
+        if (ImGui::MenuItem(buf, "CTRL+S", false, doc->Open))
             doc->DoSave();
-        if (ImGui::MenuItem("Close", "Ctrl+W", false, doc->Open))
+        if (ImGui::MenuItem("Close", "CTRL+W", false, doc->Open))
             doc->DoQueueClose();
         ImGui::EndPopup();
     }
@@ -7915,7 +7840,7 @@ void ShowExampleAppDocuments(bool* p_open)
             if (ImGui::MenuItem("Close All Documents", NULL, false, open_count > 0))
                 for (int doc_n = 0; doc_n < app.Documents.Size; doc_n++)
                     app.Documents[doc_n].DoQueueClose();
-            if (ImGui::MenuItem("Exit") && p_open)
+            if (ImGui::MenuItem("Exit", "Ctrl+F4") && p_open)
                 *p_open = false;
             ImGui::EndMenu();
         }

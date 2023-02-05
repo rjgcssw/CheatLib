@@ -22,6 +22,15 @@
 
 FMT_BEGIN_NAMESPACE
 
+// Check if std::chrono::local_t is available.
+#ifndef FMT_USE_LOCAL_TIME
+#  ifdef __cpp_lib_chrono
+#    define FMT_USE_LOCAL_TIME (__cpp_lib_chrono >= 201907L)
+#  else
+#    define FMT_USE_LOCAL_TIME 0
+#  endif
+#endif
+
 // Check if std::chrono::utc_timestamp is available.
 #ifndef FMT_USE_UTC_TIME
 #  ifdef __cpp_lib_chrono
@@ -494,10 +503,13 @@ inline std::tm localtime(std::time_t time) {
   return lt.tm_;
 }
 
-inline std::tm localtime(
-    std::chrono::time_point<std::chrono::system_clock> time_point) {
-  return localtime(std::chrono::system_clock::to_time_t(time_point));
+#if FMT_USE_LOCAL_TIME
+template <class Duration>
+inline auto localtime(std::chrono::local_time<Duration> time) -> std::tm {
+  return localtime(std::chrono::system_clock::to_time_t(
+      std::chrono::current_zone()->to_sys(time)));
 }
+#endif
 
 /**
   Converts given time since epoch as ``std::time_t`` value into calendar time,
@@ -545,6 +557,49 @@ inline std::tm gmtime(
 }
 
 FMT_BEGIN_DETAIL_NAMESPACE
+
+// DEPRECATED!
+template <typename Char>
+FMT_CONSTEXPR auto parse_align(const Char* begin, const Char* end,
+                               format_specs<Char>& specs) -> const Char* {
+  FMT_ASSERT(begin != end, "");
+  auto align = align::none;
+  auto p = begin + code_point_length(begin);
+  if (end - p <= 0) p = begin;
+  for (;;) {
+    switch (to_ascii(*p)) {
+    case '<':
+      align = align::left;
+      break;
+    case '>':
+      align = align::right;
+      break;
+    case '^':
+      align = align::center;
+      break;
+    }
+    if (align != align::none) {
+      if (p != begin) {
+        auto c = *begin;
+        if (c == '}') return begin;
+        if (c == '{') {
+          throw_format_error("invalid fill character '{'");
+          return begin;
+        }
+        specs.fill = {begin, to_unsigned(p - begin)};
+        begin = p + 1;
+      } else {
+        ++begin;
+      }
+      break;
+    } else if (p == begin) {
+      break;
+    }
+    p = begin;
+  }
+  specs.align = align;
+  return begin;
+}
 
 // Writes two-digit numbers a, b and c separated by sep to buf.
 // The method by Pavel Novikov based on
@@ -614,6 +669,8 @@ template <typename Char, typename Handler>
 FMT_CONSTEXPR const Char* parse_chrono_format(const Char* begin,
                                               const Char* end,
                                               Handler&& handler) {
+  if (begin == end || *begin == '}') return begin;
+  if (*begin != '%') FMT_THROW(format_error("invalid format"));
   auto ptr = begin;
   while (ptr != end) {
     auto c = *ptr;
@@ -989,26 +1046,6 @@ inline Int to_nonnegative_int(T value, Int upper) {
   return static_cast<Int>(value);
 }
 
-template <typename Rep, typename Period,
-          FMT_ENABLE_IF(std::numeric_limits<Rep>::is_signed)>
-constexpr std::chrono::duration<Rep, Period> abs(
-    std::chrono::duration<Rep, Period> d) {
-  // We need to compare the duration using the count() method directly
-  // due to a compiler bug in clang-11 regarding the spaceship operator,
-  // when -Wzero-as-null-pointer-constant is enabled.
-  // In clang-12 the bug has been fixed. See
-  // https://bugs.llvm.org/show_bug.cgi?id=46235 and the reproducible example:
-  // https://www.godbolt.org/z/Knbb5joYx.
-  return d.count() >= d.zero().count() ? d : -d;
-}
-
-template <typename Rep, typename Period,
-          FMT_ENABLE_IF(!std::numeric_limits<Rep>::is_signed)>
-constexpr std::chrono::duration<Rep, Period> abs(
-    std::chrono::duration<Rep, Period> d) {
-  return d;
-}
-
 constexpr long long pow10(std::uint32_t n) {
   return n == 0 ? 1 : 10 * pow10(n - 1);
 }
@@ -1044,7 +1081,7 @@ void write_fractional_seconds(OutputIt& out, Duration d, int precision = -1) {
       std::ratio<1, detail::pow10(num_fractional_digits)>>;
 
   const auto fractional =
-      detail::abs(d) - std::chrono::duration_cast<std::chrono::seconds>(d);
+      d - std::chrono::duration_cast<std::chrono::seconds>(d);
   const auto subseconds =
       std::chrono::treat_as_floating_point<
           typename subsecond_precision::rep>::value
@@ -1641,7 +1678,7 @@ OutputIt format_duration_value(OutputIt out, Rep val, int) {
 template <typename Char, typename Rep, typename OutputIt,
           FMT_ENABLE_IF(std::is_floating_point<Rep>::value)>
 OutputIt format_duration_value(OutputIt out, Rep val, int precision) {
-  auto specs = basic_format_specs<Char>();
+  auto specs = format_specs<Char>();
   specs.precision = precision;
   specs.type = precision >= 0 ? presentation_type::fixed_lower
                               : presentation_type::general_lower;
@@ -1977,7 +2014,7 @@ template <typename Char> struct formatter<weekday, Char> {
 template <typename Rep, typename Period, typename Char>
 struct formatter<std::chrono::duration<Rep, Period>, Char> {
  private:
-  basic_format_specs<Char> specs;
+  format_specs<Char> specs;
   int precision = -1;
   using arg_ref_type = detail::arg_ref<Char>;
   arg_ref_type width_ref;
@@ -1985,45 +2022,6 @@ struct formatter<std::chrono::duration<Rep, Period>, Char> {
   bool localized = false;
   basic_string_view<Char> format_str;
   using duration = std::chrono::duration<Rep, Period>;
-
-  struct spec_handler {
-    formatter& f;
-    basic_format_parse_context<Char>& context;
-    basic_string_view<Char> format_str;
-
-    template <typename Id> FMT_CONSTEXPR arg_ref_type make_arg_ref(Id arg_id) {
-      context.check_arg_id(arg_id);
-      return arg_ref_type(arg_id);
-    }
-
-    FMT_CONSTEXPR arg_ref_type make_arg_ref(basic_string_view<Char> arg_id) {
-      context.check_arg_id(arg_id);
-      return arg_ref_type(arg_id);
-    }
-
-    FMT_CONSTEXPR arg_ref_type make_arg_ref(detail::auto_id) {
-      return arg_ref_type(context.next_arg_id());
-    }
-
-    void on_error(const char* msg) { FMT_THROW(format_error(msg)); }
-    FMT_CONSTEXPR void on_fill(basic_string_view<Char> fill) {
-      f.specs.fill = fill;
-    }
-    FMT_CONSTEXPR void on_align(align_t align) { f.specs.align = align; }
-    FMT_CONSTEXPR void on_width(int width) { f.specs.width = width; }
-    FMT_CONSTEXPR void on_precision(int _precision) {
-      f.precision = _precision;
-    }
-    FMT_CONSTEXPR void end_precision() {}
-
-    template <typename Id> FMT_CONSTEXPR void on_dynamic_width(Id arg_id) {
-      f.width_ref = make_arg_ref(arg_id);
-    }
-
-    template <typename Id> FMT_CONSTEXPR void on_dynamic_precision(Id arg_id) {
-      f.precision_ref = make_arg_ref(arg_id);
-    }
-  };
 
   using iterator = typename basic_format_parse_context<Char>::iterator;
   struct parse_range {
@@ -2034,15 +2032,18 @@ struct formatter<std::chrono::duration<Rep, Period>, Char> {
   FMT_CONSTEXPR parse_range do_parse(basic_format_parse_context<Char>& ctx) {
     auto begin = ctx.begin(), end = ctx.end();
     if (begin == end || *begin == '}') return {begin, begin};
-    spec_handler handler{*this, ctx, format_str};
-    begin = detail::parse_align(begin, end, handler);
+
+    begin = detail::parse_align(begin, end, specs);
     if (begin == end) return {begin, begin};
-    begin = detail::parse_width(begin, end, handler);
+
+    begin = detail::parse_dynamic_spec(begin, end, specs.width, width_ref, ctx);
     if (begin == end) return {begin, begin};
+
     auto checker = detail::chrono_format_checker();
     if (*begin == '.') {
       checker.has_precision_integral = !std::is_floating_point<Rep>::value;
-      begin = detail::parse_precision(begin, end, handler);
+      begin =
+          detail::parse_precision(begin, end, precision, precision_ref, ctx);
     }
     if (begin != end && *begin == 'L') {
       ++begin;
@@ -2094,14 +2095,48 @@ template <typename Char, typename Duration>
 struct formatter<std::chrono::time_point<std::chrono::system_clock, Duration>,
                  Char> : formatter<std::tm, Char> {
   FMT_CONSTEXPR formatter() {
-    basic_string_view<Char> default_specs =
-        detail::string_literal<Char, '%', 'F', ' ', '%', 'T'>{};
-    this->do_parse(default_specs.begin(), default_specs.end());
+    this->format_str = detail::string_literal<Char, '%', 'F', ' ', '%', 'T'>{};
   }
 
   template <typename FormatContext>
   auto format(std::chrono::time_point<std::chrono::system_clock, Duration> val,
               FormatContext& ctx) const -> decltype(ctx.out()) {
+    using period = typename Duration::period;
+    if (period::num != 1 || period::den != 1 ||
+        std::is_floating_point<typename Duration::rep>::value) {
+      const auto epoch = val.time_since_epoch();
+      auto subsecs = std::chrono::duration_cast<Duration>(
+          epoch - std::chrono::duration_cast<std::chrono::seconds>(epoch));
+
+      if (subsecs.count() < 0) {
+        auto second = std::chrono::seconds(1);
+        if (epoch.count() < (Duration::min() + second).count())
+          FMT_THROW(format_error("duration is too small"));
+        subsecs += second;
+        val -= second;
+      }
+
+      return formatter<std::tm, Char>::do_format(
+          gmtime(std::chrono::time_point_cast<std::chrono::seconds>(val)), ctx,
+          &subsecs);
+    }
+
+    return formatter<std::tm, Char>::format(
+        gmtime(std::chrono::time_point_cast<std::chrono::seconds>(val)), ctx);
+  }
+};
+
+#if FMT_USE_LOCAL_TIME
+template <typename Char, typename Duration>
+struct formatter<std::chrono::local_time<Duration>, Char>
+    : formatter<std::tm, Char> {
+  FMT_CONSTEXPR formatter() {
+    this->format_str = detail::string_literal<Char, '%', 'F', ' ', '%', 'T'>{};
+  }
+
+  template <typename FormatContext>
+  auto format(std::chrono::local_time<Duration> val, FormatContext& ctx) const
+      -> decltype(ctx.out()) {
     using period = typename Duration::period;
     if (period::num != 1 || period::den != 1 ||
         std::is_floating_point<typename Duration::rep>::value) {
@@ -2119,6 +2154,7 @@ struct formatter<std::chrono::time_point<std::chrono::system_clock, Duration>,
         ctx);
   }
 };
+#endif
 
 #if FMT_USE_UTC_TIME
 template <typename Char, typename Duration>
@@ -2138,51 +2174,51 @@ struct formatter<std::chrono::time_point<std::chrono::utc_clock, Duration>,
 
 template <typename Char> struct formatter<std::tm, Char> {
  private:
-  enum class spec {
-    unknown,
-    year_month_day,
-    hh_mm_ss,
-  };
-  spec spec_ = spec::unknown;
-  basic_string_view<Char> specs;
+  format_specs<Char> specs;
+  detail::arg_ref<Char> width_ref;
 
  protected:
-  template <typename It> FMT_CONSTEXPR auto do_parse(It begin, It end) -> It {
-    if (begin != end && *begin == ':') ++begin;
+  basic_string_view<Char> format_str;
+
+  FMT_CONSTEXPR auto do_parse(basic_format_parse_context<Char>& ctx)
+      -> decltype(ctx.begin()) {
+    auto begin = ctx.begin(), end = ctx.end();
+    if (begin == end || *begin == '}') return begin;
+
+    begin = detail::parse_align(begin, end, specs);
+    if (begin == end) return end;
+
+    begin = detail::parse_dynamic_spec(begin, end, specs.width, width_ref, ctx);
+    if (begin == end) return end;
+
     end = detail::parse_chrono_format(begin, end, detail::tm_format_checker());
-    // Replace default spec only if the new spec is not empty.
-    if (end != begin) specs = {begin, detail::to_unsigned(end - begin)};
+    // Replace default format_str only if the new spec is not empty.
+    if (end != begin) format_str = {begin, detail::to_unsigned(end - begin)};
     return end;
   }
 
   template <typename FormatContext, typename Duration>
   auto do_format(const std::tm& tm, FormatContext& ctx,
                  const Duration* subsecs) const -> decltype(ctx.out()) {
+    auto specs_copy = specs;
+    basic_memory_buffer<Char> buf;
+    auto out = std::back_inserter(buf);
+    detail::handle_dynamic_spec<detail::width_checker>(specs_copy.width,
+                                                       width_ref, ctx);
+
     const auto loc_ref = ctx.locale();
     detail::get_locale loc(static_cast<bool>(loc_ref), loc_ref);
-    auto w = detail::tm_writer<decltype(ctx.out()), Char, Duration>(
-        loc, ctx.out(), tm, subsecs);
-    if (spec_ == spec::year_month_day)
-      w.on_iso_date();
-    else if (spec_ == spec::hh_mm_ss)
-      w.on_iso_time();
-    else
-      detail::parse_chrono_format(specs.begin(), specs.end(), w);
-    return w.out();
+    auto w =
+        detail::tm_writer<decltype(out), Char, Duration>(loc, out, tm, subsecs);
+    detail::parse_chrono_format(format_str.begin(), format_str.end(), w);
+    return detail::write(
+        ctx.out(), basic_string_view<Char>(buf.data(), buf.size()), specs_copy);
   }
 
  public:
   FMT_CONSTEXPR auto parse(basic_format_parse_context<Char>& ctx)
       -> decltype(ctx.begin()) {
-    auto end = this->do_parse(ctx.begin(), ctx.end());
-    // basic_string_view<>::compare isn't constexpr before C++17.
-    if (specs.size() == 2 && specs[0] == Char('%')) {
-      if (specs[1] == Char('F'))
-        spec_ = spec::year_month_day;
-      else if (specs[1] == Char('T'))
-        spec_ = spec::hh_mm_ss;
-    }
-    return end;
+    return this->do_parse(ctx);
   }
 
   template <typename FormatContext>

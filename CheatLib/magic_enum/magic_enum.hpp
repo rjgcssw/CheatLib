@@ -5,7 +5,7 @@
 // | |  | | (_| | (_| | | (__  | |____| | | | |_| | | | | | | | |____|_|   |_|
 // |_|  |_|\__,_|\__, |_|\___| |______|_| |_|\__,_|_| |_| |_|  \_____|
 //                __/ | https://github.com/Neargye/magic_enum
-//               |___/  version 0.8.1
+//               |___/  version 0.8.2
 //
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 // SPDX-License-Identifier: MIT
@@ -34,12 +34,12 @@
 
 #define MAGIC_ENUM_VERSION_MAJOR 0
 #define MAGIC_ENUM_VERSION_MINOR 8
-#define MAGIC_ENUM_VERSION_PATCH 1
+#define MAGIC_ENUM_VERSION_PATCH 2
 
 #include <array>
 #include <cassert>
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 #include <utility>
@@ -251,30 +251,37 @@ class static_string<0> {
 };
 
 constexpr string_view pretty_name(string_view name) noexcept {
+  const char* str = name.data();
   for (std::size_t i = name.size(); i > 0; --i) {
-    if (!((name[i - 1] >= '0' && name[i - 1] <= '9') ||
-          (name[i - 1] >= 'a' && name[i - 1] <= 'z') ||
-          (name[i - 1] >= 'A' && name[i - 1] <= 'Z') ||
+    const char c = str[i - 1];
+    if (!((c >= '0' && c <= '9') ||
+          (c >= 'a' && c <= 'z') ||
+          (c >= 'A' && c <= 'Z') ||
 #if defined(MAGIC_ENUM_ENABLE_NONASCII)
-          (name[i - 1] & 0x80) ||
+          (c & 0x80) ||
 #endif
-          (name[i - 1] == '_'))) {
+          (c == '_'))) {
       name.remove_prefix(i);
       break;
     }
   }
 
-  if (name.size() > 0 && ((name[0] >= 'a' && name[0] <= 'z') ||
-                          (name[0] >= 'A' && name[0] <= 'Z') ||
+  if (name.size() > 0) {
+    const char c = name[0];
+    if ((c >= 'a' && c <= 'z') ||
+        (c >= 'A' && c <= 'Z') ||
 #if defined(MAGIC_ENUM_ENABLE_NONASCII)
-                          (name[0]) & 0x80) ||
+        (c & 0x80) ||
 #endif
-                          (name[0] == '_'))) {
-    return name;
+        (c == '_')) {
+      return name;
+    }
   }
+
   return {}; // Invalid name.
 }
 
+template<typename Op = std::equal_to<>>
 class case_insensitive {
   static constexpr char to_lower(char c) noexcept {
     return (c >= 'A' && c <= 'Z') ? static_cast<char>(c + ('a' - 'A')) : c;
@@ -287,7 +294,7 @@ class case_insensitive {
     static_assert(always_false_v<L, R>, "magic_enum::case_insensitive not supported Non-ASCII feature.");
     return false;
 #else
-    return to_lower(lhs) == to_lower(rhs);
+    return Op{}(to_lower(lhs), to_lower(rhs));
 #endif
   }
 };
@@ -1101,7 +1108,7 @@ template <typename E>
 // Obtains index in enum values from enum value.
 // Returns optional with index.
 template <typename E>
-[[nodiscard]] constexpr auto enum_index(E value) noexcept -> detail::enable_if_t<E, optional<std::size_t>> {
+[[nodiscard]] constexpr auto enum_index([[maybe_unused]] E value) noexcept -> detail::enable_if_t<E, optional<std::size_t>> {
   using D = std::decay_t<E>;
   using U = underlying_type_t<D>;
 
@@ -1210,7 +1217,7 @@ template <detail::value_type VT, typename E>
 // Returns name from enum-flags value.
 // If enum-flags value does not have name or value out of range, returns empty string.
 template <typename E>
-[[nodiscard]] auto enum_flags_name(E value) -> detail::enable_if_t<E, string> {
+[[nodiscard]] auto enum_flags_name(E value, [[maybe_unused]] char sep = '|') -> detail::enable_if_t<E, string> {
   using D = std::decay_t<E>;
   static_assert(detail::is_flags_v<D>, "magic_enum::enum_flags_name requires enum-flags type.");
 
@@ -1230,7 +1237,7 @@ template <typename E>
 }
 
 // Allows you to write magic_enum::enum_cast<foo>("bar", magic_enum::case_insensitive);
-inline constexpr auto case_insensitive = detail::case_insensitive{};
+inline constexpr auto case_insensitive = detail::case_insensitive<>{};
 
 // Obtains enum value from integer value.
 // Returns optional with enum value.
