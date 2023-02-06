@@ -1,2 +1,2 @@
-# CheatLib-CN
+# CheatLib
  外挂开发库
