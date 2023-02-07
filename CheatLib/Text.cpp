@@ -3,6 +3,7 @@
 	2022-12-7 None!
 	--------------------------------------------------------
 */
+#include "Text.hpp"
 #include <codecvt>
 #include <Windows.h>
 #include <stdio.h>
