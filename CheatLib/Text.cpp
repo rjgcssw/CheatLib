@@ -11,6 +11,16 @@
 #include <string>
 #include <codecvt>
 namespace Text {
+	std::wstring GBKTOUTF16(const std::string& GBK)
+	{
+		char* pCStrKey = (char*)GBK.c_str();
+		int pSize = MultiByteToWideChar(CP_OEMCP, 0, pCStrKey, strlen(pCStrKey) + 1, NULL, 0);
+		wchar_t* pWCStrKey = new wchar_t[pSize];
+		MultiByteToWideChar(CP_OEMCP, 0, pCStrKey, strlen(pCStrKey) + 1, pWCStrKey, pSize);
+		std::wstring ws = pWCStrKey;
+		delete pWCStrKey;
+		return ws;
+	}
 	std::string UTF16TOUTF8(const std::wstring& UTF16)
 	{
 		static std::wstring_convert<std::codecvt_utf8<wchar_t>> strCnv;
