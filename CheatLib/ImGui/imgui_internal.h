@@ -1,10 +1,12 @@
 // dear imgui, v1.89.3 WIP
 // (internal structures/api)
 
-// You may use this file to debug, understand or extend ImGui features but we don't provide any guarantee of forward compatibility!
-// Set:
-//   #define IMGUI_DEFINE_MATH_OPERATORS
-// To implement maths operators for ImVec2 (disabled by default to not collide with using IM_VEC2_CLASS_EXTRA along with your own math types+operators)
+// You may use this file to debug, understand or extend Dear ImGui features but we don't provide any guarantee of forward compatibility.
+// To implement maths operators for ImVec2 (disabled by default to not conflict with using IM_VEC2_CLASS_EXTRA with your own math types+operators), use:
+/*
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui_internal.h"
+*/
 
 /*
 
@@ -316,8 +318,8 @@ namespace ImStb
 //-----------------------------------------------------------------------------
 
 // Helpers: Hashing
-IMGUI_API ImGuiID       ImHashData(const void* data, size_t data_size, ImU32 seed = 0);
-IMGUI_API ImGuiID       ImHashStr(const char* data, size_t data_size = 0, ImU32 seed = 0);
+IMGUI_API ImGuiID       ImHashData(const void* data, size_t data_size, ImGuiID seed = 0);
+IMGUI_API ImGuiID       ImHashStr(const char* data, size_t data_size = 0, ImGuiID seed = 0);
 
 // Helpers: Sorting
 #ifndef ImQsort
@@ -1605,6 +1607,7 @@ struct ImGuiWindowSettings
     ImVec2ih    Size;
     bool        Collapsed;
     bool        WantApply;      // Set when loaded from .ini data (to enable merging/loading .ini data into an already running context)
+    bool        WantDelete;     // Set to invalidate/delete the settings entry
 
     ImGuiWindowSettings()       { memset(this, 0, sizeof(*this)); }
     char* GetName()             { return (char*)(this + 1); }
@@ -1669,23 +1672,16 @@ enum ImGuiDebugLogFlags_
 
 struct ImGuiMetricsConfig
 {
-    bool        ShowDebugLog;
-    bool        ShowStackTool;
-    bool        ShowWindowsRects;
-    bool        ShowWindowsBeginOrder;
-    bool        ShowTablesRects;
-    bool        ShowDrawCmdMesh;
-    bool        ShowDrawCmdBoundingBoxes;
-    int         ShowWindowsRectsType;
-    int         ShowTablesRectsType;
-
-    ImGuiMetricsConfig()
-    {
-        ShowDebugLog = ShowStackTool = ShowWindowsRects = ShowWindowsBeginOrder = ShowTablesRects = false;
-        ShowDrawCmdMesh = true;
-        ShowDrawCmdBoundingBoxes = true;
-        ShowWindowsRectsType = ShowTablesRectsType = -1;
-    }
+    bool        ShowDebugLog = false;
+    bool        ShowStackTool = false;
+    bool        ShowWindowsRects = false;
+    bool        ShowWindowsBeginOrder = false;
+    bool        ShowTablesRects = false;
+    bool        ShowDrawCmdMesh = true;
+    bool        ShowDrawCmdBoundingBoxes = true;
+    bool        ShowAtlasTintedWithTextColor = false;
+    int         ShowWindowsRectsType = -1;
+    int         ShowTablesRectsType = -1;
 };
 
 struct ImGuiStackLevelInfo
@@ -2514,14 +2510,15 @@ struct ImGuiTableCellData
     ImGuiTableColumnIdx         Column;     // Column number
 };
 
-// Per-instance data that needs preserving across frames (seemingly most others do not need to be preserved aside from debug needs, does that needs they could be moved to ImGuiTableTempData ?)
+// Per-instance data that needs preserving across frames (seemingly most others do not need to be preserved aside from debug needs. Does that means they could be moved to ImGuiTableTempData?)
 struct ImGuiTableInstanceData
 {
+    ImGuiID                     TableInstanceID;
     float                       LastOuterHeight;            // Outer height from last frame
     float                       LastFirstRowHeight;         // Height of first row from last frame (FIXME: this is used as "header height" and may be reworked)
     float                       LastFrozenHeight;           // Height of frozen section from last frame
 
-    ImGuiTableInstanceData()    { LastOuterHeight = LastFirstRowHeight = LastFrozenHeight = 0.0f; }
+    ImGuiTableInstanceData()    { TableInstanceID = 0; LastOuterHeight = LastFirstRowHeight = LastFrozenHeight = 0.0f; }
 };
 
 // FIXME-TABLE: more transient data could be stored in a stacked ImGuiTableTempData: e.g. SortSpecs, incoming RowData
@@ -2767,12 +2764,15 @@ namespace ImGui
     IMGUI_API void                  MarkIniSettingsDirty();
     IMGUI_API void                  MarkIniSettingsDirty(ImGuiWindow* window);
     IMGUI_API void                  ClearIniSettings();
-    IMGUI_API ImGuiWindowSettings*  CreateNewWindowSettings(const char* name);
-    IMGUI_API ImGuiWindowSettings*  FindWindowSettings(ImGuiID id);
-    IMGUI_API ImGuiWindowSettings*  FindOrCreateWindowSettings(const char* name);
     IMGUI_API void                  AddSettingsHandler(const ImGuiSettingsHandler* handler);
     IMGUI_API void                  RemoveSettingsHandler(const char* type_name);
     IMGUI_API ImGuiSettingsHandler* FindSettingsHandler(const char* type_name);
+
+    // Settings - Windows
+    IMGUI_API ImGuiWindowSettings*  CreateNewWindowSettings(const char* name);
+    IMGUI_API ImGuiWindowSettings*  FindWindowSettingsByID(ImGuiID id);
+    IMGUI_API ImGuiWindowSettings*  FindWindowSettingsByWindow(ImGuiWindow* window);
+    IMGUI_API void                  ClearWindowSettings(const char* name);
 
     // Localization
     IMGUI_API void          LocalizeRegisterEntries(const ImGuiLocEntry* entries, int count);
@@ -2806,6 +2806,7 @@ namespace ImGui
     IMGUI_API void          MarkItemEdited(ImGuiID id);     // Mark data associated to given item as "edited", used by IsItemDeactivatedAfterEdit() function.
     IMGUI_API void          PushOverrideID(ImGuiID id);     // Push given value as-is at the top of the ID stack (whereas PushID combines old and new hashes)
     IMGUI_API ImGuiID       GetIDWithSeed(const char* str_id_begin, const char* str_id_end, ImGuiID seed);
+    IMGUI_API ImGuiID       GetIDWithSeed(int n, ImGuiID seed);
 
     // Basic Helpers for widget code
     IMGUI_API void          ItemSize(const ImVec2& size, float text_baseline_y = -1.0f);
@@ -3001,7 +3002,8 @@ namespace ImGui
     IMGUI_API void          TableDrawContextMenu(ImGuiTable* table);
     IMGUI_API bool          TableBeginContextMenuPopup(ImGuiTable* table);
     IMGUI_API void          TableMergeDrawChannels(ImGuiTable* table);
-    inline ImGuiTableInstanceData*   TableGetInstanceData(ImGuiTable* table, int instance_no) { if (instance_no == 0) return &table->InstanceDataFirst; return &table->InstanceDataExtra[instance_no - 1]; }
+    inline ImGuiTableInstanceData*  TableGetInstanceData(ImGuiTable* table, int instance_no) { if (instance_no == 0) return &table->InstanceDataFirst; return &table->InstanceDataExtra[instance_no - 1]; }
+    inline ImGuiID                  TableGetInstanceID(ImGuiTable* table, int instance_no)   { return TableGetInstanceData(table, instance_no)->TableInstanceID; }
     IMGUI_API void          TableSortSpecsSanitize(ImGuiTable* table);
     IMGUI_API void          TableSortSpecsBuild(ImGuiTable* table);
     IMGUI_API ImGuiSortDirection TableGetColumnNextSortDirection(ImGuiTableColumn* column);
@@ -3013,7 +3015,7 @@ namespace ImGui
     IMGUI_API void          TableEndCell(ImGuiTable* table);
     IMGUI_API ImRect        TableGetCellBgRect(const ImGuiTable* table, int column_n);
     IMGUI_API const char*   TableGetColumnName(const ImGuiTable* table, int column_n);
-    IMGUI_API ImGuiID       TableGetColumnResizeID(const ImGuiTable* table, int column_n, int instance_no = 0);
+    IMGUI_API ImGuiID       TableGetColumnResizeID(ImGuiTable* table, int column_n, int instance_no = 0);
     IMGUI_API float         TableGetMaxColumnWidth(const ImGuiTable* table, int column_n);
     IMGUI_API void          TableSetColumnWidthAutoSingle(ImGuiTable* table, int column_n);
     IMGUI_API void          TableSetColumnWidthAutoAll(ImGuiTable* table);
@@ -3078,8 +3080,9 @@ namespace ImGui
     IMGUI_API void          TextEx(const char* text, const char* text_end = NULL, ImGuiTextFlags flags = 0);
     IMGUI_API bool          ButtonEx(const char* label, const ImVec2& size_arg = ImVec2(0, 0), ImGuiButtonFlags flags = 0);
     IMGUI_API bool          ArrowButtonEx(const char* str_id, ImGuiDir dir, ImVec2 size_arg, ImGuiButtonFlags flags = 0);
-    IMGUI_API bool          ImageButtonEx(ImGuiID id, ImTextureID texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& bg_col, const ImVec4& tint_col);
+    IMGUI_API bool          ImageButtonEx(ImGuiID id, ImTextureID texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& bg_col, const ImVec4& tint_col, ImGuiButtonFlags flags = 0);
     IMGUI_API void          SeparatorEx(ImGuiSeparatorFlags flags);
+    IMGUI_API void          SeparatorTextEx(ImGuiID id, const char* label, const char* label_end, float extra_width);
     IMGUI_API bool          CheckboxFlags(const char* label, ImS64* flags, ImS64 flags_value);
     IMGUI_API bool          CheckboxFlags(const char* label, ImU64* flags, ImU64 flags_value);
 
